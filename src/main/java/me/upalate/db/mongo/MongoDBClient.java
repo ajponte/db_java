@@ -111,9 +111,9 @@ public class MongoDBClient implements DBClient {
         throws MongoDBException {
 
        return getCursorFromOperation(operationType,
-               key,
-               value,
-               getCollection(collectionName)).toString();
+                                     key,
+                                     value,
+                                     getCollection(collectionName)).toString();
     }
 
     /**
@@ -127,9 +127,9 @@ public class MongoDBClient implements DBClient {
      * @return
      */
     public MongoCursor<Document> getCursorFromOperation(MongoOperationType operationType,
-                                   String key,
-                                   String value,
-                                   MongoCollection<Document> collection) {
+                                                        String key,
+                                                        String value,
+                                                        MongoCollection<Document> collection) {
 
         MongoCursor<Document> cursor = collection.find().iterator();
         switch (operationType) {
