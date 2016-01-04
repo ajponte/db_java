@@ -109,7 +109,9 @@ public class MongoDBClient implements DBClient {
                        String value,
                        String collectionName)
         throws MongoDBException {
-
+       
+       // Currently returns toString to make the compiler happy.  It should return
+       // an object which represents the data in mongo we are retrieving.
        return getCursorFromOperation(operationType,
                                      key,
                                      value,
