@@ -1,5 +1,6 @@
 package me.upalate.db.mongo;
 
+import com.mongodb.Mongo;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 
@@ -8,7 +9,9 @@ import org.bson.Document;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.all;
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.exists;
 import static com.mongodb.client.model.Filters.lt;
 import static com.mongodb.client.model.Filters.lte;
 import static com.mongodb.client.model.Filters.gt;
@@ -77,22 +80,36 @@ public class MongoDBClient extends AbstractMongoDBClient {
     private MongoCursor<Document> getCursorFromOperation(MongoOperationType operationType,
                                                         String key,
                                                         String value,
-                                                        MongoCollection<Document> collection) {
+                                                        MongoCollection<Document> collection)
+      throws MongoDBException {
 
-        MongoCursor<Document> cursor = collection.find().iterator();
+        MongoCursor<Document> cursor;
         switch (operationType) {
-            case GREATER_THAN:
-                cursor = collection.find(gt(key, Integer.parseInt(value))).iterator();
-                break;
-            case GREATER_THAN_OR_EQUALS:
-                cursor = collection.find(gte(key, Integer.parseInt(value))).iterator();
-                break;
-            case LESS_THAN:
-                cursor = collection.find(lt(key, Integer.parseInt(value))).iterator();
-                break;
-            //TODO: the rest of the operations
+           case ALL:
+              cursor = collection.find(all(key, value)).iterator();
+              break;
+           case GREATER_THAN:
+               cursor = collection.find(gt(key, Integer.parseInt(value))).iterator();
+               break;
+           case GREATER_THAN_OR_EQUALS:
+               cursor = collection.find(gte(key, Integer.parseInt(value))).iterator();
+               break;
+           case LESS_THAN:
+               cursor = collection.find(lt(key, Integer.parseInt(value))).iterator();
+               break;
+           case LESS_THAN_OR_EQUALS:
+              cursor = collection.find(lte(key, Integer.parseInt(value))).iterator();
+              break;
+           case EQUALS:
+              cursor = collection.find(eq(key, value)).iterator();
+              break;
+           case EXISTS:
+              cursor = collection.find(exists(key)).iterator();
+              break;
+           default:
+              throw new MongoDBException("The operation " + operationType + " is not available");
         }
-
+        // TODO: AND operation
         return cursor;
     }
 
