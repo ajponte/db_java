@@ -4,8 +4,6 @@ package me.upalate.db.mongo;
  * Enums representing valid Mongo operations for queries.
  */
 public enum MongoOperationType {
-
-    /** Return all elements in the collection. */
     ALL,
     AND,
     EQUALS,

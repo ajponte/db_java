@@ -1,12 +1,7 @@
 package me.upalate.db.mongo;
 
-import me.upalate.db.DBClient;
-
-import com.mongodb.MongoClientURI;
-import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
 
 import org.bson.Document;
 
@@ -19,13 +14,7 @@ import static com.mongodb.client.model.Filters.lte;
 import static com.mongodb.client.model.Filters.gt;
 import static com.mongodb.client.model.Filters.gte;
 
-public class MongoDBClient implements DBClient {
-
-    /** The actual Mongo instance we are working with. */
-    private MongoClient mongoClient;
-
-    /** The current database we are performing operations on. */
-    private MongoDatabase database;
+public class MongoDBClient extends AbstractMongoDBClient {
 
     /**
      * A new Mongo client connection to a single host and port, using
@@ -35,49 +24,10 @@ public class MongoDBClient implements DBClient {
      * @param dbName The name of the database we wish to work with.
      */
     public MongoDBClient(String host, long port, String dbName) {
-        String uri = "mongodb://" + host + port;
-        mongoClient = new MongoClient(new MongoClientURI(uri));
-        database = mongoClient.getDatabase(dbName);
+        super(host, port, dbName);
     }
 
-    /**
-     * Switches the current DB we are working with to a new one.
-     *
-     * @param dbName The new DB we are switching to.
-     * @throws MongoDBException If the db name is null or the empty string.
-     */
-    public void changeDb(String dbName)
-        throws MongoDBException {
-        if (dbName == null || dbName.isEmpty()) {
-            throw new MongoDBException("DB Name must be non-null");
-        }
-        database = mongoClient.getDatabase(dbName);
-    }
-
-    /**
-     * Returns the collection specified by the collection name.
-     *
-     * @param collectionName The name of the collection we wish to get.
-     * @return A {@link MongoCollection} of {@link Document}s.
-     * @throws MongoDBException if the collection name is null or the empty String.
-     */
-    public MongoCollection<Document> getCollection(String collectionName)
-        throws MongoDBException {
-        if (collectionName == null || collectionName.isEmpty()) {
-            throw new MongoDBException("collection name must be non-null");
-        }
-
-        return database.getCollection(collectionName);
-    }
-
-    /**
-     * Iserts the List of Documents into the collection identified by its collection name.
-     *
-     * @param documents The List of Documents we wish to insert.
-     * @param collectionName The name of the collection we are inserting documents into.
-     * @throws MongoDBException If the list of documents is empty or null, or the
-     *                          collection name is invalid.
-     */
+   @Override
     public void insertDocuments(List<Document> documents, String collectionName)
         throws MongoDBException {
         if (documents == null || documents.isEmpty()) {
@@ -87,13 +37,8 @@ public class MongoDBClient implements DBClient {
         getCollection(collectionName).insertMany(documents);
     }
 
-    /**
-     * Inserts a single document into the collection.
-     *
-     * @param document The document we are inserting.
-     * @param collectionName The collection we are inserting the document into.
-     * @throws MongoDBException If the document or collectionName are null.
-     */
+
+   @Override
     public void insertDocument(Document document, String collectionName)
         throws MongoDBException {
         checkDocument(document);
@@ -104,6 +49,7 @@ public class MongoDBClient implements DBClient {
         getCollection(collectionName).insertOne(document);
     }
 
+   @Override
     public String find(MongoOperationType operationType,
                        String key,
                        String value,
@@ -128,7 +74,7 @@ public class MongoDBClient implements DBClient {
      * @param collection The collection we are querying
      * @return
      */
-    public MongoCursor<Document> getCursorFromOperation(MongoOperationType operationType,
+    private MongoCursor<Document> getCursorFromOperation(MongoOperationType operationType,
                                                         String key,
                                                         String value,
                                                         MongoCollection<Document> collection) {
