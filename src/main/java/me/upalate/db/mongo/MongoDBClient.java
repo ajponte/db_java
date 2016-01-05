@@ -30,7 +30,7 @@ public class MongoDBClient extends AbstractMongoDBClient {
         super(host, port, dbName);
     }
 
-   @Override
+    @Override
     public void insertDocuments(List<Document> documents, String collectionName)
         throws MongoDBException {
         if (documents == null || documents.isEmpty()) {
@@ -41,7 +41,7 @@ public class MongoDBClient extends AbstractMongoDBClient {
     }
 
 
-   @Override
+    @Override
     public void insertDocument(Document document, String collectionName)
         throws MongoDBException {
         checkDocument(document);
@@ -52,7 +52,7 @@ public class MongoDBClient extends AbstractMongoDBClient {
         getCollection(collectionName).insertOne(document);
     }
 
-   @Override
+    @Override
     public String find(MongoOperationType operationType,
                        String key,
                        String value,
@@ -77,10 +77,10 @@ public class MongoDBClient extends AbstractMongoDBClient {
      * @param collection The collection we are querying
      * @return
      */
-    private MongoCursor<Document> getCursorFromOperation(MongoOperationType operationType,
-                                                        String key,
-                                                        String value,
-                                                        MongoCollection<Document> collection)
+     private MongoCursor<Document> getCursorFromOperation(MongoOperationType operationType,
+                                                          String key,
+                                                          String value,
+                                                          MongoCollection<Document> collection)
       throws MongoDBException {
 
         MongoCursor<Document> cursor;
